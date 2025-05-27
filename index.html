@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语学习中心</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #00b894;
+            --light: #f8f9fa;
+            --dark: #2d3436;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', '微软雅黑', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 100px 20px 60px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .app-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .app-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .app-title {
+            font-size: 1.5rem;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .app-description {
+            color: #636e72;
+            margin-bottom: 1.5rem;
+        }
+
+        .app-link {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: var(--primary);
+            color: white;
+            border-radius: 2rem;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .app-link:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            color: #636e72;
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            margin-top: auto;
+        }
+
+        @media (max-width: 768px) {
+            .app-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .main-content {
+                padding: 80px 15px 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <a href="#" class="logo">英语学习中心</a>
+            <div>
+                <a href="teachsoft.html" class="app-link" style="margin-right: 1rem;">单词消消乐</a>
+                <a href="suitangxiaoce.html" class="app-link">智能出题</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section class="app-grid">
+            <div class="app-card" onclick="location.href='teachsoft.html'">
+                <div class="app-icon">🎮</div>
+                <h2 class="app-title">单词消消乐</h2>
+                <p class="app-description">
+                    趣味单词配对游戏，支持中英互配和计时挑战
+                </p>
+                <a href="teachsoft.html" class="app-link">开始游戏</a>
+            </div>
+
+            <div class="app-card" onclick="location.href='suitangxiaoce.html'">
+                <div class="app-icon">📚</div>
+                <h2 class="app-title">智能出题系统</h2>
+                <p class="app-description">
+                    个性化题库训练，支持随机抽题和错题收集
+                </p>
+                <a href="suitangxiaoce.html" class="app-link">开始测试</a>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2025 英语学习中心 · 通过游戏化学习提升英语能力</p>
+    </footer>
+</body>
+</html>
