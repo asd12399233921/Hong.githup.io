@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>单词记忆卡片</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            color: #34495e;
+            touch-action: manipulation;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 25px 20px;
+            width: 95%;
+            max-width: 600px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3498db, #2ecc71, #9b59b6);
+        }
+        
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: clamp(1.8rem, 5vw, 2.2rem);
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #3498db;
+            border-radius: 2px;
+        }
+        
+        .card {
+            min-height: 280px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin: 15px 0;
+            position: relative;
+            padding: 15px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .word-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .word {
+            font-size: clamp(2rem, 7vw, 2.8rem);
+            color: #3498db;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .audio-icon {
+            cursor: pointer;
+            font-size: clamp(1.5rem, 5vw, 1.8rem);
+            color: #3498db;
+            margin-left: 12px;
+            transition: all 0.3s ease;
+            width: clamp(40px, 10vw, 50px);
+            height: clamp(40px, 10vw, 50px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(52, 152, 219, 0.1);
+        }
+        
+        .audio-icon.speaking {
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .phonetic {
+            color: #7f8c8d;
+            font-size: clamp(1.1rem, 3vw, 1.3rem);
+            margin: 8px 0 15px;
+            font-style: italic;
+        }
+        
+        .meaning-container {
+            position: relative;
+            margin: 15px 0;
+            min-height: 70px;
+        }
+        
+        .meaning {
+            font-size: clamp(1.3rem, 4vw, 1.7rem);
+            color: #2c3e50;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            transition: all 0.4s ease;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
+            opacity: 1;
+            transform: translateY(0);
+            line-height: 1.5;
+        }
+        
+        .meaning.hidden {
+            opacity: 0;
+            transform: translateY(10px);
+            pointer-events: none;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        
+        .meaning-toggle {
+            cursor: pointer;
+            color: #3498db;
+            font-weight: 600;
+            margin: 12px 0;
+            display: inline-block;
+            padding: 8px 18px;
+            border-radius: 25px;
+            background: rgba(52, 152, 219, 0.1);
+            transition: all 0.3s ease;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+        }
+        
+        .meaning-toggle:hover {
+            background: rgba(52, 152, 219, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 18px 0;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: clamp(1rem, 3vw, 1.1rem);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 150px;
+            min-height: 50px;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        button:disabled {
+            background: #bdc3c7;
+            transform: none;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+        
+        #prev-btn {
+            background: linear-gradient(to right, #9b59b6, #8e44ad);
+            box-shadow: 0 4px 10px rgba(155, 89, 182, 0.3);
+        }
+        
+        #prev-btn:hover {
+            box-shadow: 0 6px 15px rgba(155, 89, 182, 0.4);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: #ecf0f1;
+            border-radius: 10px;
+            height: 8px;
+            margin: 20px 0 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #2ecc71, #1abc9c);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            text-align: right;
+        }
+        
+        .completed {
+            color: #27ae60;
+            font-size: clamp(1.3rem, 4vw, 1.6rem);
+            padding: 15px;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            color: #7f8c8d;
+            font-size: clamp(0.85rem, 2.8vw, 0.95rem);
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .stat-value {
+            font-size: clamp(1.2rem, 4vw, 1.4rem);
+            font-weight: 700;
+            color: #3498db;
+            margin-top: 5px;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+            
+            .card {
+                min-height: 250px;
+                padding: 12px;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            button {
+                width: 100%;
+                max-width: 300px;
+                margin: 5px 0;
+            }
+        }
+        
+        /* Toast样式 */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            max-width: 80%;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>单词记忆卡片</h1>
+        
+        <div class="progress-text">学习进度: <span id="progress-text">0</span>%</div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        
+        <div class="card">
+            <div class="word-container">
+                <span class="word" id="current-word"></span>
+                <span class="audio-icon" id="audio-icon" onclick="speakWord()">🔊</span>
+            </div>
+            <div class="phonetic" id="phonetic"></div>
+            
+            <div class="meaning-container">
+                <div class="meaning hidden" id="meaning"></div>
+            </div>
+            
+            <div class="meaning-toggle" id="meaning-toggle" onclick="toggleMeaning()">
+                点击显示含义
+            </div>
+        </div>
+        
+        <div class="buttons-container">
+            <button id="prev-btn" onclick="prevWord()">上一个单词</button>
+            <button id="next-btn" onclick="nextWord()">下一个单词</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div>已学习</div>
+                <div class="stat-value" id="learned-count">0</div>
+            </div>
+            <div class="stat-item">
+                <div>剩余</div>
+                <div class="stat-value" id="remaining-count">0</div>
+            </div>
+            <div class="stat-item">
+                <div>总计</div>
+                <div class="stat-value" id="total-count">60</div>
+            </div>
+        </div>
+        
+        <div id="completed-message" class="completed"></div>
+    </div>
+
+    <script>
+        // 单词数据（含音标）
+        const words = [
+            {word: "planet", meaning: "行星", phonetic: "/ˈplænɪt/"},
+            {word: "ocean", meaning: "海洋", phonetic: "/ˈoʊʃən/"},
+            {word: "metre", meaning: "米", phonetic: "/ˈmiːtər/"},
+            {word: "kilometre", meaning: "千米", phonetic: "/kɪˈlɑːmɪtər/"},
+            {word: "through", meaning: "穿过", phonetic: "/θruː/"},
+            {word: "eastern", meaning: "东方的", phonetic: "/ˈiːstərn/"},
+            {word: "freshwater", meaning: "淡水的", phonetic: "/ˈfreʃwɔːtər/"},
+            {word: "million", meaning: "一百万", phonetic: "/ˈmɪljən/"},
+            {word: "inland", meaning: "内陆的", phonetic: "/ˈɪnlənd/"},
+            {word: "north-east", meaning: "东北", phonetic: "/nɔːrθ iːst/"},
+            {word: "large", meaning: "大的", phonetic: "/lɑːrdʒ/"},
+            {word: "deep", meaning: "深的", phonetic: "/diːp/"},
+            {word: "wide", meaning: "宽的", phonetic: "/waɪd/"},
+            {word: "everywhere", meaning: "到处", phonetic: "/ˈevriwer/"},
+            {word: "ground", meaning: "地面", phonetic: "/ɡraʊnd/"},
+            {word: "into", meaning: "进入", phonetic: "/ˈɪntuː/"},
+            {word: "form", meaning: "形成", phonetic: "/fɔːrm/"},
+            {word: "cloud", meaning: "云", phonetic: "/klaʊd/"},
+            {word: "ice", meaning: "冰", phonetic: "/aɪs/"},
+            {word: "drop", meaning: "滴", phonetic: "/drɑːp/"},
+            {word: "full", meaning: "充满的", phonetic: "/fʊl/"},
+            {word: "useful", meaning: "有用的", phonetic: "/ˈjuːsfl/"},
+            {word: "wash", meaning: "洗", phonetic: "/wɑːʃ/"},
+            {word: "outside", meaning: "在外面", phonetic: "/ˌaʊtˈsaɪd/"},
+            {word: "cycle", meaning: "循环", phonetic: "/ˈsaɪkəl/"},
+            {word: "quick", meaning: "快的", phonetic: "/kwɪk/"},
+            {word: "shower", meaning: "淋浴", phonetic: "/ˈʃaʊər/"},
+            {word: "off", meaning: "除去", phonetic: "/ɔːf/"},
+            {word: "tap", meaning: "水龙头", phonetic: "/tæp/"},
+            {word: "while", meaning: "当……时", phonetic: "/waɪl/"},
+            {word: "brush", meaning: "刷", phonetic: "/brʌʃ/"},
+            {word: "tooth", meaning: "牙", phonetic: "/tuːθ/"},
+            {word: "reuse", meaning: "重复使用", phonetic: "/ˌriːˈjuːz/"},
+            {word: "matter", meaning: "要紧", phonetic: "/ˈmætər/"},
+            {word: "fact", meaning: "事实", phonetic: "/fækt/"},
+            {word: "valuable", meaning: "宝贵的", phonetic: "/ˈvæljuəbl/"},
+            {word: "enough", meaning: "足够的", phonetic: "/ɪˈnʌf/"},
+            {word: "once", meaning: "一次", phonetic: "/wʌns/"},
+            {word: "must", meaning: "必须", phonetic: "/mʌst/"},
+            {word: "collect", meaning: "收集", phonetic: "/kəˈlekt/"},
+            {word: "dig", meaning: "挖", phonetic: "/dɪɡ/"},
+            {word: "worry", meaning: "担心", phonetic: "/ˈwɜːri/"},
+            {word: "story", meaning: "故事", phonetic: "/ˈstɔːri/"},
+            {word: "cover", meaning: "覆盖", phonetic: "/ˈkʌvər/"},
+            {word: "coastline", meaning: "海岸线", phonetic: "/ˈkoʊstlaɪn/"},
+            {word: "than", meaning: "比", phonetic: "/ðæn/"},
+            {word: "thousand", meaning: "一千", phonetic: "/ˈθaʊzənd/"},
+            {word: "eighty", meaning: "八十", phonetic: "/ˈeɪti/"},
+            {word: "sixty", meaning: "六十", phonetic: "/ˈsɪksti/"},
+            {word: "billion", meaning: "十亿", phonetic: "/ˈbɪljən/"},
+            {word: "per cent", meaning: "百分之……", phonetic: "/pər sent/"},
+            {word: "land", meaning: "陆地", phonetic: "/lænd/"},
+            {word: "knock", meaning: "敲", phonetic: "/nɑːk/"},
+            {word: "door", meaning: "门", phonetic: "/dɔːr/"},
+            {word: "step", meaning: "步骤", phonetic: "/step/"},
+            {word: "litter", meaning: "乱扔", phonetic: "/ˈlɪtər/"}
+        ].sort((a, b) => a.word.localeCompare(b.word));
+
+        // 初始化变量
+        let currentIndex = 0;
+        let shuffledWords = [];
+        let meaningVisible = false;
+        
+        // 语音合成管理器
+        const SpeechManager = {
+            voices: [],
+            defaultVoice: null,
+            isLoading: false,
+            isSupported: 'speechSynthesis' in window,
+            
+            // 初始化语音引擎
+            init() {
+                if (!this.isSupported) return;
+                
+                // 预加载语音列表
+                this.loadVoices();
+                
+                // 监听语音列表变化事件
+                window.speechSynthesis.onvoiceschanged = () => {
+                    this.loadVoices();
+                };
+            },
+            
+            // 加载可用语音
+            loadVoices() {
+                if (this.isLoading) return;
+                
+                this.isLoading = true;
+                this.voices = window.speechSynthesis.getVoices();
+                
+                // 优先选择美式英语语音
+                this.defaultVoice = this.voices.find(voice => 
+                    voice.lang === 'en-US' && voice.localService
+                ) || this.voices.find(voice => 
+                    voice.lang === 'en-US'
+                ) || this.voices[0];
+                
+                this.isLoading = false;
+            },
+            
+            // 朗读单词
+            speak(word, onStart = () => {}, onEnd = () => {}, onError = () => {}) {
+                if (!this.isSupported) {
+                    onError('当前浏览器不支持语音合成功能');
+                    return;
+                }
+                
+                if (this.isLoading) {
+                    setTimeout(() => this.speak(word, onStart, onEnd, onError), 300);
+                    return;
+                }
+                
+                try {
+                    // 停止当前正在播放的语音
+                    window.speechSynthesis.cancel();
+                    
+                    const utterance = new SpeechSynthesisUtterance(word);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.9;
+                    utterance.volume = 1;
+                    
+                    // 设置语音
+                    if (this.defaultVoice) {
+                        utterance.voice = this.defaultVoice;
+                    }
+                    
+                    // 事件处理
+                    utterance.onstart = onStart;
+                    utterance.onend = onEnd;
+                    utterance.onerror = (event) => {
+                        onError(`语音合成错误: ${event.error}`);
+                    };
+                    
+                    // 播放语音
+                    window.speechSynthesis.speak(utterance);
+                    
+                } catch (error) {
+                    onError(`语音合成异常: ${error.message}`);
+                }
+            }
+        };
+        
+        // 显示轻量级提示
+        function showToast(message) {
+            // 创建toast元素
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // 显示toast
+            setTimeout(() => {
+                toast.style.opacity = '0.9';
+            }, 10);
+            
+            // 3秒后隐藏
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+        
+        // 发音函数
+        function speakWord() {
+            if (currentIndex === null) {
+                showToast("所有单词已学习完毕");
+                return;
+            }
+            
+            const word = shuffledWords[currentIndex].word;
+            const audioIcon = document.getElementById('audio-icon');
+            
+            // 更新UI状态
+            audioIcon.classList.add('speaking');
+            
+            // 使用语音管理器朗读单词
+            SpeechManager.speak(
+                word,
+                // 开始回调
+                () => {},
+                // 结束回调
+                () => {
+                    audioIcon.classList.remove('speaking');
+                },
+                // 错误回调
+                (errorMsg) => {
+                    console.error('语音合成失败:', errorMsg);
+                    audioIcon.classList.remove('speaking');
+                    showToast(`发音失败: ${errorMsg}`);
+                }
+            );
+        }
+        
+        // 初始化函数
+        function init() {
+            // 随机打乱单词顺序
+            shuffleWords();
+            updateCard();
+            updateStats();
+            document.getElementById('total-count').textContent = words.length;
+            
+            // 初始化语音管理器
+            SpeechManager.init();
+            
+            // 添加滑动手势支持
+            initSwipeGesture();
+        }
+        
+        // Fisher-Yates 洗牌算法
+        function shuffleWords() {
+            shuffledWords = [...words];
+            for (let i = shuffledWords.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledWords[i], shuffledWords[j]] = [shuffledWords[j], shuffledWords[i]];
+            }
+        }
+        
+        // 更新卡片函数
+        function updateCard() {
+            if (currentIndex === null) {
+                document.getElementById('completed-message').textContent = "🎉 所有单词已学习完毕！";
+                document.querySelector('.card').style.display = 'none';
+                document.getElementById('next-btn').textContent = "再学一次";
+                document.getElementById('prev-btn').style.display = 'none';
+                return;
+            }
+
+            document.querySelector('.card').style.display = 'flex';
+            document.getElementById('completed-message').textContent = "";
+            document.getElementById('prev-btn').style.display = 'inline-block';
+            
+            const currentWord = shuffledWords[currentIndex];
+            document.getElementById('current-word').textContent = currentWord.word;
+            document.getElementById('meaning').textContent = currentWord.meaning;
+            document.getElementById('phonetic').textContent = currentWord.phonetic;
+            
+            // 重置含义为隐藏状态
+            resetMeaningVisibility();
+            
+            // 更新按钮状态
+            document.getElementById('next-btn').textContent = currentIndex === shuffledWords.length - 1
+                ? "再学一次" 
+                : "下一个单词";
+            document.getElementById('prev-btn').disabled = currentIndex === 0;
+            
+            // 更新进度
+            updateProgress();
+        }
+        
+        // 重置含义为隐藏状态
+        function resetMeaningVisibility() {
+            const meaningEl = document.getElementById('meaning');
+            const toggleEl = document.getElementById('meaning-toggle');
+            
+            meaningEl.classList.add('hidden');
+            meaningVisible = false;
+            toggleEl.textContent = "点击显示含义";
+        }
+        
+        // 切换含义显示状态
+        function toggleMeaning() {
+            const meaningEl = document.getElementById('meaning');
+            const toggleEl = document.getElementById('meaning-toggle');
+            
+            meaningVisible = !meaningVisible;
+            
+            if (meaningVisible) {
+                meaningEl.classList.remove('hidden');
+                toggleEl.textContent = "点击隐藏含义";
+            } else {
+                meaningEl.classList.add('hidden');
+                toggleEl.textContent = "点击显示含义";
+            }
+        }
+        
+        // 更新学习进度
+        function updateProgress() {
+            const progress = Math.round(((currentIndex + 1) / shuffledWords.length) * 100);
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = progress;
+        }
+        
+        // 更新统计信息
+        function updateStats() {
+            document.getElementById('learned-count').textContent = currentIndex + 1;
+            document.getElementById('remaining-count').textContent = shuffledWords.length - (currentIndex + 1);
+            document.getElementById('total-count').textContent = words.length;
+        }
+        
+        // 下一个单词
+        function nextWord() {
+            // 处理"再学一次"逻辑
+            if (currentIndex === shuffledWords.length - 1) {
+                shuffleWords();
+                currentIndex = 0;
+                updateCard();
+                updateStats();
+                return;
+            }
+            
+            // 移动到下一个单词
+            currentIndex++;
+            updateCard();
+            updateStats();
+        }
+        
+        // 上一个单词
+        function prevWord() {
+            if (currentIndex === 0) return;
+            
+            // 移动到上一个单词
+            currentIndex--;
+            updateCard();
+            updateStats();
+        }
+        
+        // 初始化滑动手势
+        function initSwipeGesture() {
+            const card = document.querySelector('.card');
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            card.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            }, false);
+            
+            card.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                const swipeThreshold = 50;
+                if (touchEndX - touchStartX > swipeThreshold) {
+                    prevWord();
+                } else if (touchEndX - touchStartX < -swipeThreshold) {
+                    nextWord();
+                }
+            }
+        }
+        
+        // 初始化
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

@@ -10,6 +10,7 @@
             --secondary: #00b894;
             --light: #f8f9fa;
             --dark: #2d3436;
+            --accent: #ff7675;
         }
 
         * {
@@ -74,6 +75,25 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             cursor: pointer;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .app-card:hover::before {
+            transform: scaleX(1);
         }
 
         .app-card:hover {
@@ -84,6 +104,12 @@
         .app-icon {
             font-size: 3rem;
             margin-bottom: 1rem;
+            color: var(--primary);
+            transition: transform 0.3s ease;
+        }
+
+        .app-card:hover .app-icon {
+            transform: scale(1.1) rotate(5deg);
         }
 
         .app-title {
@@ -104,11 +130,43 @@
             color: white;
             border-radius: 2rem;
             text-decoration: none;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, background 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-link::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
         }
 
         .app-link:hover {
             transform: scale(1.05);
+            background: #5b4cc4;
+        }
+
+        .app-link:active::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            100% {
+                transform: scale(20, 20);
+                opacity: 0;
+            }
         }
 
         footer {
@@ -132,6 +190,23 @@
                 padding: 80px 15px 40px;
             }
         }
+
+        /* 记忆卡片模块特殊样式 */
+        .card-module .app-icon {
+            color: var(--accent);
+        }
+        
+        .card-module::before {
+            background: var(--accent);
+        }
+        
+        .card-module .app-link {
+            background: var(--accent);
+        }
+        
+        .card-module .app-link:hover {
+            background: #ff6b6b;
+        }
     </style>
 </head>
 <body>
@@ -140,7 +215,8 @@
             <a href="#" class="logo">英语学习中心</a>
             <div>
                 <a href="teachsoft.html" class="app-link" style="margin-right: 1rem;">单词消消乐</a>
-                <a href="suitangxiaoce.html" class="app-link">智能出题</a>
+                <a href="suitangxiaoce.html" class="app-link" style="margin-right: 1rem;">智能出题</a>
+                <a href="wordcards.html" class="app-link">记忆小卡片</a>
             </div>
         </nav>
     </header>
@@ -163,6 +239,15 @@
                     个性化题库训练，支持随机抽题和错题收集
                 </p>
                 <a href="suitangxiaoce.html" class="app-link">开始测试</a>
+            </div>
+
+            <div class="app-card card-module" onclick="location.href='wordcards.html'">
+                <div class="app-icon">📇</div>
+                <h2 class="app-title">记忆小卡片</h2>
+                <p class="app-description">
+                    单词卡片记忆工具，支持正反查看和进度追踪
+                </p>
+                <a href="wordcards.html" class="app-link">开始学习</a>
             </div>
         </section>
     </main>
