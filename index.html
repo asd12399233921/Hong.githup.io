@@ -84,8 +84,7 @@
             border: 1px solid transparent;
         }
 
-        .nav-link:hover,
-        .nav-link.active {
+        .nav-link:hover {
             background: rgba(108, 92, 231, 0.1);
             color: var(--primary);
             border-color: rgba(108, 92, 231, 0.2);
@@ -388,10 +387,10 @@
                 <span>英语学习中心</span>
             </a>
             <div class="nav-links">
-                <a href="teachsoft.html" class="nav-link">单词消消乐</a>
-                <a href="suitangxiaoce.html" class="nav-link">智能出题</a>
                 <a href="shinecards.html" class="nav-link">记忆小卡片</a>
-                <a href="read.html" class="nav-link active">课文朗读</a>
+                <a href="teachsoft.html" class="nav-link">单词消消乐</a>
+                <a href="read.html" class="nav-link">课文朗读</a>
+                <a href="suitangxiaoce.html" class="nav-link">智能出题</a>
             </div>
         </nav>
     </header>
@@ -403,32 +402,6 @@
         </section>
 
         <section class="app-grid">
-            <div class="app-card game-module" onclick="location.href='teachsoft.html'">
-                <div class="card-inner">
-                    <div class="app-icon-container">
-                        <div class="app-icon">🎮</div>
-                    </div>
-                    <h2 class="app-title">单词消消乐</h2>
-                    <p class="app-description">
-                        趣味单词配对游戏，支持中英互配和计时挑战模式，轻松记忆单词
-                    </p>
-                    <a href="teachsoft.html" class="app-link">开始游戏</a>
-                </div>
-            </div>
-
-            <div class="app-card quiz-module" onclick="location.href='suitangxiaoce.html'">
-                <div class="card-inner">
-                    <div class="app-icon-container">
-                        <div class="app-icon">📚</div>
-                    </div>
-                    <h2 class="app-title">智能出题系统</h2>
-                    <p class="app-description">
-                        个性化题库训练，支持随机抽题、错题收集和智能推荐
-                    </p>
-                    <a href="suitangxiaoce.html" class="app-link">开始测试</a>
-                </div>
-            </div>
-
             <div class="app-card card-module" onclick="location.href='shinecards.html'">
                 <div class="card-inner">
                     <div class="app-icon-container">
@@ -439,6 +412,19 @@
                         高效单词卡片记忆工具，支持正反查看、分组学习和进度追踪
                     </p>
                     <a href="shinecards.html" class="app-link">开始学习</a>
+                </div>
+            </div>
+
+            <div class="app-card game-module" onclick="location.href='teachsoft.html'">
+                <div class="card-inner">
+                    <div class="app-icon-container">
+                        <div class="app-icon">🎮</div>
+                    </div>
+                    <h2 class="app-title">单词消消乐</h2>
+                    <p class="app-description">
+                        趣味单词配对游戏，支持中英互配和计时挑战模式，轻松记忆单词
+                    </p>
+                    <a href="teachsoft.html" class="app-link">开始游戏</a>
                 </div>
             </div>
 
@@ -454,13 +440,25 @@
                     <a href="read.html" class="app-link">开始朗读</a>
                 </div>
             </div>
+
+            <div class="app-card quiz-module" onclick="location.href='suitangxiaoce.html'">
+                <div class="card-inner">
+                    <div class="app-icon-container">
+                        <div class="app-icon">📚</div>
+                    </div>
+                    <h2 class="app-title">智能出题系统</h2>
+                    <p class="app-description">
+                        个性化题库训练，支持随机抽题、错题收集和智能推荐
+                    </p>
+                    <a href="suitangxiaoce.html" class="app-link">开始测试</a>
+                </div>
+            </div>
         </section>
     </main>
 
     <footer>
         <div class="footer-content">
-            <p>© 2025 英语学习中心 · 通过游戏化学习提升英语能力</p>
-            <p style="font-size: 0.9rem; color: #8892a0;">让学习英语变得有趣而高效</p>
+            <p>© 2025 英语学习中心 · 石狮市第二中学 洪振芳</p>
         </div>
     </footer>
     

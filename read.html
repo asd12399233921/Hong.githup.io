@@ -255,6 +255,60 @@
         .btn.btn-outline:hover {
             background: #e6f2ff;
         }
+
+        /* 速度控制 */
+        .speed-control {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 2px solid #2a86ff;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 3px 10px rgba(42, 134, 255, 0.2);
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+        
+        .speed-control:hover {
+            box-shadow: 0 5px 15px rgba(42, 134, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .speed-control i {
+            color: #2a86ff;
+            font-size: 1.3rem;
+            margin-right: 10px;
+        }
+        
+        .speed-label {
+            color: #2a86ff;
+            font-weight: 500;
+            margin-right: 10px;
+            white-space: nowrap;
+        }
+        
+        .speed-select {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #1e5799;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 5px;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232a86ff'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center;
+            background-size: 16px;
+            padding-right: 30px;
+        }
+        
+        .speed-select:focus {
+            outline: none;
+        }
         
         .progress-section {
             background: #f5faff;
@@ -374,6 +428,10 @@
             .lesson-nav {
                 margin: 15px 20px;
             }
+            
+            .speed-control {
+                min-width: 180px;
+            }
         }
         
         @media (max-width: 480px) {
@@ -401,6 +459,11 @@
             .lesson-nav {
                 flex-wrap: wrap;
                 gap: 8px;
+            }
+            
+            .speed-control {
+                width: 100%;
+                justify-content: center;
             }
         }
         
@@ -431,6 +494,17 @@
         
         .sentence.active {
             animation: highlight 0.5s ease-out;
+        }
+        
+        /* 当前速度指示 */
+        .speed-indicator {
+            background: #2a86ff;
+            color: white;
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -470,6 +544,19 @@
                 <button id="autoPlayBtn" class="btn">
                     <i class="fas fa-robot"></i> <span>自动播放</span>
                 </button>
+                
+                <!-- 速度控制 -->
+                <div class="speed-control">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="speed-label">朗读速度</span>
+                    <select id="speedSelect" class="speed-select">
+                        <option value="0.75">0.75x</option>
+                        <option value="0.8">0.8x</option>
+                        <option value="0.9">0.9x</option>
+                        <option value="1.0" selected>1.0x</option>
+                    </select>
+                    <span id="speedIndicator" class="speed-indicator">1.0x</span>
+                </div>
             </div>
             
             <div class="progress-section">
@@ -489,6 +576,7 @@
                     <li><strong>播放/暂停</strong> - 控制当前句子的朗读</li>
                     <li><strong>上一句/下一句</strong> - 在课文句子之间导航</li>
                     <li><strong>自动播放</strong> - 系统自动逐句朗读并暂停等待跟读</li>
+                    <li><strong>速度控制</strong> - 可选择0.75x、0.8x、0.9x或1.0x朗读速度</li>
                     <li><strong>跟读练习</strong> - 听完句子后，大声跟读当前句子</li>
                     <li>当前<strong style="color:#2a86ff;">高亮句子</strong>表示正在朗读或需要跟读的句子</li>
                     <li>每完成一句跟读后，点击<span style="color:#2a86ff;">下一句</span>继续学习</li>
@@ -496,7 +584,8 @@
             </div>
             
             <div class="footer">
-                <p>英语课文跟读学习系统 &copy; 2023 | 提升英语发音和流利度</p>
+                <p>英语课文跟读学习系统 &copy; 2025 | 提升英语发音和流利度</p>
+				<p>石狮市第二中学 洪振芳</p>
             </div>
         </div>
     </div>
@@ -634,6 +723,8 @@
             const currentStep = document.getElementById('currentStep');
             const totalSteps = document.getElementById('totalSteps');
             const completion = document.getElementById('completion');
+            const speedSelect = document.getElementById('speedSelect');
+            const speedIndicator = document.getElementById('speedIndicator');
 
             // 状态变量
             let currentLesson = 0;   // 当前课文索引
@@ -643,6 +734,7 @@
             let sentences = [];      // 当前课文句子集合
             let speechSynthesis = window.speechSynthesis;
             let utterance = null;    // 语音合成实例
+            let currentSpeed = 1.0;  // 当前朗读速度
 
             // 初始化语音合成
             function initSpeech() {
@@ -654,7 +746,7 @@
                 }
                 utterance = new SpeechSynthesisUtterance();
                 utterance.lang = 'en-US';
-                utterance.rate = 1.0;
+                utterance.rate = currentSpeed;
                 utterance.pitch = 1.0;
 
                 // 语音结束事件
@@ -758,6 +850,7 @@
                 // 获取当前句子的英文部分
                 const englishText = sentences[currentIndex].querySelector('.english').textContent;
                 utterance.text = englishText;
+                utterance.rate = currentSpeed; // 设置当前速度
                 speechSynthesis.speak(utterance);
             }
 
@@ -782,6 +875,23 @@
             function moveToPrevSentence() {
                 currentIndex = (currentIndex - 1 + sentences.length) % sentences.length;
                 highlightCurrentSentence();
+            }
+            
+            // 更新速度指示
+            function updateSpeedIndicator() {
+                speedIndicator.textContent = currentSpeed.toFixed(1) + 'x';
+            }
+            
+            // 更新朗读速度
+            function updateSpeed() {
+                currentSpeed = parseFloat(speedSelect.value);
+                updateSpeedIndicator();
+                
+                // 如果当前正在朗读，更新速率
+                if (isPlaying) {
+                    speechSynthesis.cancel();
+                    readCurrentSentence();
+                }
             }
 
             // 事件绑定
@@ -820,6 +930,9 @@
                     playPauseBtn.innerHTML = '<i class="fas fa-play"></i> <span>播放</span>';
                 }
             });
+            
+            // 速度选择事件
+            speedSelect.addEventListener('change', updateSpeed);
 
             // 键盘快捷键
             document.addEventListener('keydown', (e) => {
@@ -834,6 +947,7 @@
 
             // 初始加载第一个课文
             loadLesson(0);
+            updateSpeedIndicator();
         });
     </script>
 </body>
