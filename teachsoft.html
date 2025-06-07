@@ -3,169 +3,321 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>趣味单词消消乐</title>
+    <title>单词消消乐</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
     <style>
-        /* 自定义配色方案 */
-        :root {
-            --primary-blue: #6c5ce7;    /* 主蓝色 */
-            --primary-green: #00b894;   /* 主绿色 */
-            --secondary-yellow: #ffeaa7; /* 辅助黄色 */
-            --accent-red: #ff7675;      /* 强调红色 */
-            --background: #f8f9fa;      /* 背景色 */
+        /* 全局样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-
+        
+        /* 蓝白色调配色方案 */
+        :root {
+            --primary-blue: #3b82f6;
+            --primary-light: #93c5fd;
+            --primary-dark: #1d4ed8;
+            --secondary-blue: #06b6d4;
+            --secondary-light: #bfdbfe;
+            --success-color: #10b981;
+            --text-dark: #1e293b;
+            --text-light: #334155;
+            --bg-light: #f8fafc;
+            --card-bg: white;
+            --card-border: #e2e8f0;
+            --shadow-light: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
         /* 整体页面样式 */
         body {
-            font-family: 'Comic Neue', cursive; /* 使用可爱字体 */
-            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); /* 渐变背景 */
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-light);
             min-height: 100vh;
             padding: 20px;
             margin: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 20%),
+                linear-gradient(135deg, rgba(59, 130, 246, 0.03) 0%, rgba(6, 182, 212, 0.03) 100%);
+            position: relative;
+            overflow-x: hidden;
         }
-
+        
+        /* 动态装饰元素 */
+        .decoration {
+            position: absolute;
+            z-index: -1;
+            opacity: 0.7;
+            animation: float 20s infinite ease-in-out;
+        }
+        
+        .decoration.circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-light) 0%, transparent 100%);
+            filter: blur(60px);
+            top: -50px;
+            left: -50px;
+        }
+        
+        .decoration.wave {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--secondary-light) 0%, transparent 100%);
+            filter: blur(40px);
+            bottom: -30px;
+            right: -30px;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+        }
+        
+        .decoration.square {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary-light) 0%, transparent 100%);
+            filter: blur(30px);
+            top: 30%;
+            right: 10%;
+            transform: rotate(45deg);
+            border-radius: 15%;
+        }
+        
+        .decoration.diamond {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, var(--secondary-blue) 0%, transparent 100%);
+            filter: blur(40px);
+            bottom: 30%;
+            left: 10%;
+            transform: rotate(45deg);
+            border-radius: 10%;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(10px, -15px); }
+            50% { transform: translate(0, 10px); }
+            75% { transform: translate(-10px, -5px); }
+        }
+        
         /* 标题样式 */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 10;
         }
+        
         .header h1 {
-            color: var(--primary-blue);
-            font-size: 2.5em;
-            text-shadow: 2px 2px 0px white;
-            display: inline-block;
-            padding: 10px 30px;
-            background: rgba(255,255,255,0.9);
-            border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin: 0;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+            letter-spacing: -0.5px;
         }
-
+        
+        .header p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
         /* 游戏控制面板 */
         .control-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 800px;
-            margin-bottom: 20px;
-            padding: 15px 20px;
+            max-width: 850px;
+            margin-bottom: 25px;
+            padding: 18px 25px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 18px;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--card-border);
+            position: relative;
+            z-index: 10;
+        }
+        
+        .panel-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 20px;
             background: white;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            box-sizing: border-box;
+            border-radius: 14px;
+            min-width: 140px;
+            border: 1px solid var(--card-border);
+            transition: var(--transition);
         }
-
-        .timer, .score-board, .progress, .rules-btn-container {
-            background: rgba(240, 240, 240, 0.7);
-            padding: 10px 15px;
-            border-radius: 10px;
-            font-size: 1.2em;
-            font-weight: bold;
+        
+        .panel-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-medium);
         }
-
-        .timer {
-            color: var(--accent-red);
+        
+        .panel-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-
-        .score-board {
-            color: var(--primary-blue);
+        
+        .panel-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
-        .progress {
-            color: var(--primary-green);
+        
+        .timer .panel-value {
+            background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
-
-        .rules-btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.9em;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(108, 92, 231, 0.3);
+        
+        .score-board .panel-value {
+            background: linear-gradient(135deg, #f59e0b, #eab308);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
-
-        .rules-btn:hover {
-            background: #574b90;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.4);
-        }
-
+        
         /* 游戏主容器 */
         .game-container {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* 固定4列网格 */
-            gap: 15px;
-            max-width: 800px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 850px;
             width: 100%;
-            padding: 20px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
             position: relative;
-            border: 3px solid var(--primary-green);
-            box-sizing: border-box;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--card-border);
+            min-height: 550px;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(59, 130, 246, 0.03) 0%, transparent 30%),
+                radial-gradient(circle at 85% 85%, rgba(6, 182, 212, 0.03) 0%, transparent 30%);
         }
-
+        
         /* 卡片基础样式 */
         .tile {
-            background: white;
             padding: 20px;
             text-align: center;
             cursor: pointer;
-            border-radius: 15px;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 平滑动画 */
-            min-height: 100px;
+            border-radius: 16px;
+            transition: var(--transition);
+            min-height: 130px;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            border: 2px solid transparent;
+            align-items: center;
+            border: 1px solid var(--card-border);
             position: relative;
-            font-size: 1.2em;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-light);
         }
-
-        /* 英文卡片样式 */
+        
+        .tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: var(--transition);
+        }
+        
+        .tile:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tile:hover::before {
+            opacity: 1;
+        }
+        
+        /* 英文卡片样式 - 蓝色调 */
         .tile.en {
-            background: linear-gradient(135deg, #74ebd5 0%, #9face6 100%);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(147, 197, 253, 0.08) 100%);
+            border-left: 4px solid var(--primary-blue);
         }
-
-        /* 中文卡片样式 */
+        
+        .tile.en .word {
+            color: var(--primary-dark);
+        }
+        
+        /* 中文卡片样式 - 绿色调 */
         .tile.zh {
-            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(110, 231, 183, 0.08) 100%);
+            border-left: 4px solid var(--success-color);
         }
-
+        
+        .tile.zh .word {
+            color: #065f46;
+        }
+        
         /* 选中状态 */
         .tile.selected {
-            border: 3px solid var(--primary-green);
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(108,92,231,0.3);
+            border: 2px solid var(--secondary-blue);
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
             z-index: 10;
+            animation: pulse 1.5s infinite;
         }
-
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(6, 182, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(6, 182, 212, 0); }
+        }
+        
         /* 已匹配卡片 */
         .tile.matched {
-            opacity: 0.3;
-            background: #e0e0e0;
             pointer-events: none;
+            opacity: 0.8;
+            transform: scale(0.95);
         }
+        
         .tile.matched::after {
             content: "✓";
             position: absolute;
-            color: var(--primary-green);
-            font-size: 40px;
+            color: var(--success-color);
+            font-size: 50px;
             font-weight: bold;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
+            z-index: 10;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
         }
-
+        
         /* 游戏开始遮罩 */
         .game-start {
             position: absolute;
@@ -178,19 +330,34 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 24px;
             z-index: 20;
             transition: opacity 0.5s;
+            padding: 30px;
         }
-
+        
         .game-start h2 {
-            color: var(--primary-blue);
-            font-size: 2.5em;
-            margin-bottom: 30px;
+            color: var(--text-dark);
+            font-family: 'Nunito', sans-serif;
+            font-size: 2.8rem;
+            margin-bottom: 20px;
             text-align: center;
-            text-shadow: 1px 1px 0px white;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(59, 130, 246, 0.2);
         }
-
+        
+        .game-start p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 30px;
+            line-height: 1.7;
+        }
+        
         /* 游戏结束遮罩 */
         .game-over {
             position: absolute;
@@ -198,45 +365,135 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.97);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 24px;
             z-index: 999;
+            padding: 40px;
+            text-align: center;
         }
-
+        
         .game-over h2 {
-            color: var(--accent-red);
-            font-size: 2em;
+            font-family: 'Nunito', sans-serif;
+            font-size: 3.5rem;
             margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 15px rgba(59, 130, 246, 0.3);
         }
-
+        
         .game-over p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text-dark);
         }
-
-        .restart-btn {
-            background: var(--primary-green);
-            color: white;
+        
+        .final-score {
+            font-size: 4rem;
+            font-weight: 800;
+            margin: 20px 0;
+            background: linear-gradient(135deg, var(--success-color), #059669);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .time-message {
+            color: var(--text-light);
+            font-size: 1.2rem;
+            margin-top: 15px;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 16px 40px;
+            border-radius: 14px;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1.2em;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 184, 148, 0.3);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2);
         }
-
-        .restart-btn:hover {
-            background: #00a080;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0, 184, 148, 0.4);
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            z-index: -1;
+            transition: var(--transition);
         }
-
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn:hover::before {
+            transform: scale(1.05);
+        }
+        
+        .btn i {
+            font-size: 1.3rem;
+        }
+        
+        .btn-primary {
+            color: white;
+        }
+        
+        .btn-accent {
+            background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(6, 182, 212, 0.2);
+        }
+        
+        .btn-accent::before {
+            background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
+        }
+        
+        .btn-accent:hover {
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
+        }
+        
+        /* 规则按钮 */
+        .rules-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 1px solid var(--card-border);
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .rules-btn:hover {
+            background: rgba(59, 130, 246, 0.05);
+            color: var(--primary-blue);
+            transform: translateY(-3px);
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+        
         /* 加载遮罩 */
         .loading {
             position: absolute;
@@ -244,40 +501,35 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            border-radius: 20px;
+            border-radius: 24px;
             z-index: 30;
         }
-
+        
         .loading-spinner {
-            border: 5px solid #f3f3f3;
+            border: 5px solid #e2e8f0;
             border-top: 5px solid var(--primary-blue);
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
-
+        
+        .loading p {
+            color: var(--text-light);
+            font-size: 1.2rem;
+        }
+        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* 动画效果 */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes sparkle {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
-        }
-
+        
         /* 游戏规则模态框 */
         .rules-modal {
             position: fixed;
@@ -285,7 +537,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.1);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -293,96 +545,198 @@
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s, visibility 0.3s;
+            backdrop-filter: blur(5px);
         }
-
+        
         .rules-modal.active {
             opacity: 1;
             visibility: visible;
         }
-
+        
         .rules-content {
             background: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 600px;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 700px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            transform: scale(0.8);
-            transition: transform 0.3s;
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--card-border);
+            transform: scale(0.9);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
+        
         .rules-modal.active .rules-content {
             transform: scale(1);
         }
-
+        
         .rules-content h2 {
-            color: var(--primary-blue);
-            font-size: 1.8em;
+            font-family: 'Nunito', sans-serif;
+            font-size: 2.2rem;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
+            background: linear-gradient(135deg, var(--primary-blue), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
         }
-
+        
         .rules-content ul {
-            padding-left: 20px;
-            margin-bottom: 20px;
+            padding-left: 25px;
+            margin-bottom: 30px;
         }
-
+        
         .rules-content li {
-            margin-bottom: 15px;
-            line-height: 1.5;
+            margin-bottom: 18px;
+            line-height: 1.6;
+            color: var(--text-dark);
+            position: relative;
+            padding-left: 15px;
+            font-size: 1.1rem;
         }
-
+        
+        .rules-content li::before {
+            content: "•";
+            color: var(--secondary-blue);
+            font-size: 1.5rem;
+            position: absolute;
+            left: -15px;
+            top: -5px;
+        }
+        
         .close-btn {
-            background: var(--accent-red);
+            background: linear-gradient(135deg, var(--secondary-blue), #0ea5e9);
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
+            padding: 14px 35px;
+            border-radius: 14px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 1em;
-            transition: all 0.3s;
-            box-shadow: 0 2px 8px rgba(255, 118, 117, 0.3);
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: var(--transition);
+            box-shadow: 0 6px 15px rgba(6, 182, 212, 0.2);
             display: block;
             margin: 0 auto;
         }
-
+        
         .close-btn:hover {
-            background: #ff6b6b;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 118, 117, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
         }
-
+        
         /* 通知样式 */
         .notification {
             position: fixed;
-            top: 20px;
+            top: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
+            background: white;
+            color: var(--text-dark);
+            padding: 15px 35px;
+            border-radius: 14px;
             z-index: 100;
-            transition: opacity 0.5s;
+            transition: all 0.5s;
+            opacity: 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow-light);
+            font-weight: 500;
+            text-align: center;
+            max-width: 90%;
+        }
+        
+        .notification.show {
             opacity: 1;
+            top: 40px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 900px) {
+            .game-container {
+                grid-template-columns: repeat(3, 1fr);
+                padding: 20px;
+                gap: 15px;
+            }
+            
+            .control-panel {
+                flex-wrap: wrap;
+                gap: 15px;
+                justify-content: center;
+            }
+            
+            .panel-item {
+                min-width: 120px;
+                padding: 10px 15px;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .game-container {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .panel-item {
+                min-width: 100px;
+            }
+            
+            .panel-label {
+                font-size: 0.8rem;
+            }
+            
+            .panel-value {
+                font-size: 1.4rem;
+            }
+            
+            .tile {
+                min-height: 110px;
+                padding: 15px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 动态装饰元素 -->
+    <div class="decoration circle"></div>
+    <div class="decoration wave"></div>
+    <div class="decoration square"></div>
+    <div class="decoration diamond"></div>
+    
     <div class="header">
-        <h1>单词消消乐 📚</h1>
+        <h1>单词消消乐</h1>
+        <p>通过匹配中英文单词对来测试你的词汇量！挑战自己，看看你能在多短的时间内完成所有单词！</p>
     </div>
     
     <div class="control-panel">
-        <div class="timer">总用时: <span id="time-elapsed">00:00</span></div>
-        <div class="score-board">得分: <span id="score">0</span></div>
-        <div class="progress">已完成: <span id="progress">0%</span></div>
+        <div class="panel-item timer">
+            <div class="panel-label"><i class="fas fa-clock"></i> 总用时</div>
+            <div class="panel-value" id="time-elapsed">00:00</div>
+        </div>
+        
+        <div class="panel-item score-board">
+            <div class="panel-label"><i class="fas fa-star"></i> 得分</div>
+            <div class="panel-value" id="score">0</div>
+        </div>
+        
+        <div class="panel-item progress">
+            <div class="panel-label"><i class="fas fa-chart-line"></i> 已完成</div>
+            <div class="panel-value" id="progress">0%</div>
+        </div>
+        
         <div class="rules-btn-container">
-            <button class="rules-btn" id="rules-btn">游戏规则</button>
+            <button class="rules-btn" id="rules-btn">
+                <i class="fas fa-book"></i> 游戏规则
+            </button>
         </div>
     </div>
     
@@ -391,17 +745,26 @@
             <div class="loading-spinner"></div>
             <p>正在加载单词...</p>
         </div>
+        
         <div class="game-start" id="gameStart">
-            <h2>准备好挑战了吗？</h2>
-            <button class="restart-btn" id="start-btn">开始游戏</button>
+            <h2>单词记忆挑战</h2>
+            <p>匹配中英文单词对来测试你的词汇量！每次匹配成功获得20分，匹配错误扣5分。完成所有单词对挑战你的极限速度！</p>
+            <button class="btn btn-accent" id="start-btn">
+                <i class="fas fa-play"></i> 开始挑战
+            </button>
         </div>
+        
+        <!-- 卡片将由JS动态生成 -->
     </div>
     
     <div class="game-over" id="gameOver" style="display: none;">
-        <h2 id="gameOverTitle">游戏结束!</h2>
-        <p id="gameOverMessage">你的最终得分: <span id="final-score">0</span></p>
-        <p id="timeMessage" style="display: none;">总用时: <span id="total-time">00:00</span></p>
-        <button class="restart-btn" id="restart-btn">再来一局</button>
+        <h2 id="gameOverTitle">挑战成功！</h2>
+        <p>你已掌握所有单词！</p>
+        <div class="final-score" id="final-score">0</div>
+        <p class="time-message">总用时: <span id="total-time">00:00</span></p>
+        <button class="btn btn-primary" id="restart-btn">
+            <i class="fas fa-redo"></i> 再来一局
+        </button>
     </div>
 
     <!-- 游戏规则模态框 -->
@@ -422,6 +785,8 @@
             <button class="close-btn" id="close-btn">我知道了</button>
         </div>
     </div>
+
+    <div class="notification" id="notification">这是一条通知</div>
 
     <script>
         // 游戏状态管理对象
@@ -562,32 +927,7 @@
         
         /** 重新开始游戏 */
         function restartGame() {
-			location.reload(true); //强制刷新页面（参数true表示强制从服务器加载）
-            /* // 停止计时器
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-                gameState.timerInterval = null;
-            }
-        
-            // 重置所有关键状态
-            gameState.score = 0;
-            gameState.elapsedTime = 0;
-            gameState.selectedTiles = [];
-            gameState.usedWords.clear();
-            gameState.matchedWords.clear();
-            gameState.gameActive = false;
-        
-            // 更新UI元素
-            document.getElementById('score').textContent = "0";
-            document.getElementById('time-elapsed').textContent = "00:00";
-            document.getElementById('gameOver').style.display = "none";
-            document.getElementById('gameStart').style.display = "none"; // 隐藏开始界面
-        
-            // 初始化新棋盘
-            setupGameBoard();
-            
-            // 直接开始新游戏
-            startGame(); // 新增这行代码 */
+            location.reload(true); //强制刷新页面（参数true表示强制从服务器加载）
         }
         
         /** 开始计时器 */
@@ -786,7 +1126,7 @@
             }
         }
         
-        /** 修改validateMatch函数（关键修复点） */
+        /** 验证匹配 */
         function validateMatch() {
             const [first, second] = gameState.selectedTiles;
             
@@ -801,7 +1141,7 @@
                             (second.item.type === 'en' && second.item.meaning === first.item.word);
         
             if (isMatch) {
-                // 确保始终记录英文单词（关键修复）
+                // 确保始终记录英文单词
                 const enWord = first.item.type === 'en' ? first.item.word : second.item.word;
                 if (!gameState.matchedWords.has(enWord)) {
                     gameState.matchedWords.add(enWord);
@@ -848,7 +1188,7 @@
             if (scoreElement) scoreElement.textContent = gameState.score;
         }
         
-        /** 修改updateProgress函数（添加容错处理） */
+        /** 更新进度 */
         function updateProgress() {
             const matchedCount = gameState.matchedWords.size;
             const totalCount = gameState.wordPairs.length;
@@ -866,7 +1206,7 @@
             }
         }
         
-        /** 修改checkAllMatched函数（关键修复点） */
+        /** 检查所有卡片是否匹配 */
         function checkAllMatched(immediate = false) {
             if (!gameState.gameActive) return;
         
@@ -900,44 +1240,44 @@
             immediate ? checkFinal() : setTimeout(checkFinal, 300);
         }
         
-        /** 结束游戏（增强健壮性） */
-            function endGame(isComplete = false) {
-                // 确保状态更新
-                gameState.gameActive = false;
-                clearInterval(gameState.timerInterval);
+        /** 结束游戏 */
+        function endGame(isComplete = false) {
+            // 确保状态更新
+            gameState.gameActive = false;
+            clearInterval(gameState.timerInterval);
+        
+            // 安全获取元素
+            const gameOverElement = document.getElementById('gameOver');
+            const gameStartElement = document.getElementById('gameStart');
             
-                // 安全获取元素
-                const gameOverElement = document.getElementById('gameOver');
-                const gameStartElement = document.getElementById('gameStart');
-                
-                if (!gameOverElement) {
-                    console.error("未找到gameOver元素！");
-                    return;
-                }
-                
-                // 更新界面显示
-                gameOverElement.style.display = 'flex';
-                gameOverElement.style.zIndex = '999';
-                
-                if (isComplete) {
-                    // 更新完成信息
-                    document.getElementById('gameOverTitle').textContent = '挑战成功！🎉';
-                    document.getElementById('gameOverMessage').textContent = 
-                        `你已掌握所有 ${gameState.wordPairs.length} 个单词！`;
-                    
-                    const timeElement = document.getElementById('total-time');
-                    if (timeElement) {
-                        const minutes = Math.floor(gameState.elapsedTime / 60000);
-                        const seconds = Math.floor((gameState.elapsedTime % 60000) / 1000);
-                        timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-                    }
-                    document.getElementById('timeMessage').style.display = 'block';
-                }
-                
-                // 隐藏其他界面
-                if (gameStartElement) gameStartElement.style.display = 'none';
-                document.getElementById('loading').style.display = 'none';
+            if (!gameOverElement) {
+                console.error("未找到gameOver元素！");
+                return;
             }
+            
+            // 更新界面显示
+            gameOverElement.style.display = 'flex';
+            gameOverElement.style.zIndex = '999';
+            
+            // 更新最终得分
+            document.getElementById('final-score').textContent = gameState.score;
+            
+            if (isComplete) {
+                // 更新完成信息
+                document.getElementById('gameOverTitle').textContent = '挑战成功！🎉';
+                
+                const timeElement = document.getElementById('total-time');
+                if (timeElement) {
+                    const minutes = Math.floor(gameState.elapsedTime / 60000);
+                    const seconds = Math.floor((gameState.elapsedTime % 60000) / 1000);
+                    timeElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+            
+            // 隐藏其他界面
+            if (gameStartElement) gameStartElement.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
+        }
         
         /** 显示游戏规则 */
         function showRules() {
@@ -957,20 +1297,12 @@
         
         /** 显示通知 */
         function showNotification(message) {
-            let notification = document.getElementById('notification');
-            
-            if (!notification) {
-                notification = document.createElement('div');
-                notification.id = 'notification';
-                notification.className = 'notification';
-                document.body.appendChild(notification);
-            }
-            
+            const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.style.opacity = '1';
+            notification.classList.add('show');
             
             setTimeout(() => {
-                notification.style.opacity = '0';
+                notification.classList.remove('show');
             }, 3000);
         }
         

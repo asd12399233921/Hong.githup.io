@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>英语单词记忆卡片</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e6f7ff 0%, #f0f9ff 100%); /* 保持原页面背景 */
+            padding: 20px;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.05"><path d="M20,20 Q40,5 50,20 T80,20 Q95,40 80,50 T80,80 Q60,95 50,80 T20,80 Q5,60 20,50 T20,20Z" fill="%23007bff"/></svg>');
+            z-index: -1;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.92);
+            border-radius: 25px;
+            box-shadow: 0 15px 50px rgba(0, 123, 255, 0.15);
+            overflow: hidden;
+            padding: 30px;
+            position: relative;
+            border: 1px solid rgba(173, 216, 230, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #007bff, #00bfff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            color: #5a6b7c;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: linear-gradient(135deg, #e6f7ff, #f0f9ff);
+            padding: 15px;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(173, 216, 230, 0.5);
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 10px 15px;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 3px 8px rgba(0, 123, 255, 0.1);
+            transition: all 0.3s ease;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 123, 255, 0.15);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 0.95rem;
+            color: #5a6b7c;
+            font-weight: 600;
+        }
+        
+        .flashcard-container {
+            perspective: 1500px;
+            height: 380px;
+            margin: 25px auto 35px;
+            width: 100%;
+            max-width: 620px;
+        }
+        
+        .flashcard {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 20px 40px rgba(0, 123, 255, 0.25); /* 加深卡片阴影 */
+        }
+        
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 35px;
+            border-radius: 25px;
+            text-align: center;
+        }
+        
+        .front {
+            background: linear-gradient(135deg, #0088ff 0%, #00aaff 100%); /* 加深正面背景 */
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .back {
+            background: linear-gradient(135deg, #0066cc 0%, #0088ff 100%); /* 加深背面背景 */
+            color: white;
+            transform: rotateY(180deg);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .emoji {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+        
+        .word {
+            font-size: 3.5rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        .phonetic {
+            font-size: 1.9rem;
+            margin-bottom: 25px;
+            font-family: 'Courier New', monospace;
+            background-color: rgba(255, 255, 255, 0.25);
+            padding: 8px 20px;
+            border-radius: 35px;
+            font-weight: 500;
+        }
+        
+        .definition {
+            font-size: 1.9rem;
+            margin-bottom: 25px;
+            font-weight: bold;
+            padding: 0 10px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .example {
+            font-size: 1.5rem;
+            font-style: italic;
+            line-height: 1.6;
+            max-width: 90%;
+            background-color: rgba(255, 255, 255, 0.25);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        .hint {
+            position: absolute;
+            bottom: 25px;
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.85);
+            background-color: rgba(0, 0, 0, 0.15);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 16px 40px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 55px;
+            background: linear-gradient(90deg, #007bff, #00bfff);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 6px 18px rgba(0, 123, 255, 0.2);
+            font-weight: 600;
+        }
+        
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 123, 255, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(2px);
+        }
+        
+        .btn.sound {
+            background: linear-gradient(90deg, #00bfff, #007bff);
+            padding: 14px 25px;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        
+        .sound-front {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .sound-front:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .sound-front i {
+            font-size: 1.5rem;
+            color: white;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0f0ff;
+            border-radius: 15px;
+            margin: 30px 0 25px;
+            height: 16px;
+            overflow: hidden;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(173, 216, 230, 0.5);
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #007bff, #00bfff);
+            border-radius: 15px;
+            transition: width 0.4s ease;
+            position: relative;
+        }
+        
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: shine 2s infinite;
+        }
+        
+        @keyframes shine {
+            0% { background-position: -100px; }
+            100% { background-position: 200px; }
+        }
+        
+        .instructions {
+            background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 30px;
+            border-left: 5px solid #007bff;
+            box-shadow: 0 5px 15px rgba(0, 123, 255, 0.1);
+            border: 1px solid rgba(173, 216, 230, 0.5);
+        }
+        
+        .instructions h3 {
+            color: #007bff;
+            margin-bottom: 15px;
+            font-size: 1.6rem;
+        }
+        
+        .instructions ul {
+            padding-left: 25px;
+        }
+        
+        .instructions li {
+            margin-bottom: 10px;
+            color: #5a6b7c;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+        
+        .instructions li strong {
+            color: #007bff;
+        }
+        
+        .watermark {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+            color: rgba(0, 123, 255, 0.3);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2.3rem;
+            }
+            
+            .word {
+                font-size: 2.8rem;
+            }
+            
+            .phonetic, .definition {
+                font-size: 1.6rem;
+            }
+            
+            .example {
+                font-size: 1.3rem;
+            }
+            
+            .flashcard-container {
+                height: 330px;
+            }
+            
+            .btn {
+                padding: 14px 30px;
+                font-size: 1.1rem;
+            }
+            
+            .emoji {
+                font-size: 3.5rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .word {
+                font-size: 2.3rem;
+            }
+            
+            .phonetic, .definition {
+                font-size: 1.4rem;
+            }
+            
+            .example {
+                font-size: 1.1rem;
+            }
+            
+            .flashcard-container {
+                height: 280px;
+            }
+            
+            .controls {
+                gap: 15px;
+            }
+            
+            .btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+            
+            .emoji {
+                font-size: 3rem;
+            }
+            
+            .stat-item {
+                padding: 8px 12px;
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .sound-front {
+                width: 40px;
+                height: 40px;
+                top: 15px;
+                right: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>英语单词记忆卡片</h1>
+            <p class="subtitle">点击卡片翻转 | 正反面均可发音 | 趣味学习体验</p>
+        </header>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">37</div>
+                <div class="stat-label">总单词数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="currentIndex">1</div>
+                <div class="stat-label">当前进度</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="flipCount">0</div>
+                <div class="stat-label">翻转次数</div>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar" style="width: 2.7%;"></div>
+        </div>
+        
+        <div class="flashcard-container">
+            <div class="flashcard" id="flashcard">
+                <div class="card-face front">
+                    <div class="sound-front" id="frontSoundBtn">
+                        <i class="fas fa-volume-up"></i>
+                    </div>
+                    <div class="emoji" id="emoji">📚</div>
+                    <div class="word" id="word">useful</div>
+                    <div class="phonetic" id="phonetic">/ˈjuːsfl/</div>
+                    <div class="hint">点击卡片查看释义和例句</div>
+                </div>
+                <div class="card-face back">
+                    <button class="btn sound" id="soundBtn">
+                        <i class="fas fa-volume-up"></i> 发音
+                    </button>
+                    <div class="definition" id="definition">adj. 有用的；有帮助的</div>
+                    <div class="example" id="example">This dictionary is very useful for language learners.</div>
+                    <div class="hint">点击卡片返回单词</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <button class="btn" id="prevBtn">
+                <i class="fas fa-arrow-left"></i> 上一个
+            </button>
+            <button class="btn" id="randomBtn">
+                <i class="fas fa-random"></i> 随机单词
+            </button>
+            <button class="btn" id="nextBtn">
+                下一个 <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+        
+        <div class="instructions">
+            <h3>使用说明</h3>
+            <ul>
+                <li><strong>点击卡片</strong> - 翻转卡片查看单词释义和例句</li>
+                <li><strong>发音功能</strong> - 正面右上角图标或背面按钮均可发音</li>
+                <li><strong>随机单词</strong> - 随机切换到另一个单词</li>
+                <li><strong>上一个/下一个</strong> - 按顺序浏览所有单词</li>
+                <li><strong>进度条</strong> - 显示当前学习进度</li>
+                <li><strong>趣味学习</strong> - 每个单词配有相关表情符号，帮助记忆</li>
+            </ul>
+        </div>
+        
+        <div class="watermark">英语学习助手 | 适度深蓝卡片</div>
+    </div>
+
+    <script>
+        // 单词数据（每个单词配有一个emoji表情）
+        const words = [
+            { word: "useful", phonetic: "/ˈjuːsfl/", definition: "adj. 有用的；有帮助的", example: "This dictionary is very useful for language learners.", emoji: "📚" },
+            { word: "wash", phonetic: "/wɒʃ/ ; /wɑːʃ/", definition: "v. 洗", example: "You should wash your hands before eating.", emoji: "🧼" },
+            { word: "outside", phonetic: "/aʊdˈsaɪd/", definition: "prop. 在……外面；adv. 在外面", example: "The children are playing outside in the garden.", emoji: "🌳" },
+            { word: "cycle", phonetic: "/ˈsaɪkl/", definition: "n. 循环", example: "The water cycle is essential for life on Earth.", emoji: "🔄" },
+            { word: "quick", phonetic: "/kwɪk/", definition: "adj. 快的；迅速的", example: "She gave a quick answer to the question.", emoji: "⚡" },
+            { word: "shower", phonetic: "/ˈʃaʊə/", definition: "n. 淋浴；淋浴间 v. （洗）淋浴", example: "I take a shower every morning before work.", emoji: "🚿" },
+            { word: "off", phonetic: "/ɒf/ ; /ɔːf/", definition: "adv. 除去；休假；休息", example: "Please turn off the lights when you leave.", emoji: "🔌" },
+            { word: "tap", phonetic: "/tæp/", definition: "n. 水龙头", example: "Don't leave the tap running while brushing your teeth.", emoji: "🚰" },
+            { word: "while", phonetic: "/waɪl/", definition: "conj. 当……的时候；而，然而", example: "She listened to music while doing her homework.", emoji: "⏳" },
+            { word: "brush", phonetic: "/brʌʃ/", definition: "v. （用刷子）刷净 n. 刷子", example: "Brush your teeth twice a day for good oral hygiene.", emoji: "🪥" },
+            { word: "tooth", phonetic: "/tuːθ/ (pl. teeth /tiːθ/)", definition: "n. 牙；齿", example: "I need to see a dentist because I have a toothache.", emoji: "🦷" },
+            { word: "reuse", phonetic: "/ˌriːˈjuːz/", definition: "v. 再次使用；重复使用", example: "We should reuse plastic bags to reduce waste.", emoji: "♻️" },
+            { word: "matter", phonetic: "/ˈmætə/", definition: "n. 关于……的事情 v. 要紧", example: "What's the matter? You look upset.", emoji: "❓" },
+            { word: "fact", phonetic: "/fækt/", definition: "n. 事实；真相；现实", example: "It's a fact that exercise improves your health.", emoji: "ℹ️" },
+            { word: "valuable", phonetic: "/ˈvæljʊəbl/", definition: "adj. 宝贵的", example: "Time is the most valuable resource we have.", emoji: "💎" },
+            { word: "enough", phonetic: "/ɪˈnʌf/", definition: "adj. 足够的 adv. 足够地", example: "We have enough food for everyone at the party.", emoji: "✅" },
+            { word: "once", phonetic: "/wʌns/", definition: "adv. 一次；曾经 conj. 一旦……就", example: "I visit my grandparents once a month.", emoji: "1️⃣" },
+            { word: "must", phonetic: "/mʌst/", definition: "modal v. 必须 n. 必须做的事", example: "You must wear a seatbelt while driving.", emoji: "🔔" },
+            { word: "collect", phonetic: "/kəˈlekt/", definition: "v. 收集；采集", example: "My brother likes to collect stamps from different countries.", emoji: "🗂️" },
+            { word: "dig", phonetic: "/dɪɡ/", definition: "v. 掘（地）；挖（土）", example: "The dog likes to dig holes in the backyard.", emoji: "⛏️" },
+            { word: "worry", phonetic: "/ˈwʌri/", definition: "v. 担心，发愁 n. 令人担忧的事", example: "Don't worry about the exam; you've prepared well.", emoji: "😟" },
+            { word: "story", phonetic: "/ˈstɔːri/", definition: "n. 故事；小说", example: "My grandmother tells the best bedtime stories.", emoji: "📖" },
+            { word: "cover", phonetic: "/ˈkʌvə/", definition: "v. 覆盖；遮盖 n. 覆盖物", example: "Please cover the food to keep it fresh.", emoji: "🧱" },
+            { word: "coastline", phonetic: "/ˈkəʊstlaɪn/", definition: "n. 海岸线；沿海地带", example: "The coastline of Norway is famous for its fjords.", emoji: "🌊" },
+            { word: "than", phonetic: "/ðæn/ ; /ðən/", definition: "prop., conj. 比；多于，少于", example: "She is taller than her brother.", emoji: "↔️" },
+            { word: "thousand", phonetic: "/ˈθaʊznd/", definition: "num. 一千", example: "The stadium can hold over fifty thousand people.", emoji: "1️⃣0️⃣0️⃣0️⃣" },
+            { word: "eighty", phonetic: "/ˈeɪti/", definition: "num. 八十", example: "My grandmother is eighty years old this year.", emoji: "8️⃣0️⃣" },
+            { word: "sixty", phonetic: "/ˈsɪksti/", definition: "num. 六十", example: "There are sixty seconds in a minute.", emoji: "6️⃣0️⃣" },
+            { word: "billion", phonetic: "/ˈbɪljən/", definition: "num. 十亿", example: "The company is worth several billion dollars.", emoji: "💰" },
+            { word: "per cent", phonetic: "/pəˈsent/", definition: "n. 百分之……", example: "Ninety per cent of the students passed the exam.", emoji: "%️⃣" },
+            { word: "land", phonetic: "/lænd/", definition: "n. 陆地，大地；地带，土地", example: "After two weeks at sea, we were happy to see land.", emoji: "🌍" },
+            { word: "knock", phonetic: "/nɒk/", definition: "v. 敲击 n. 敲击声", example: "Please knock before entering the room.", emoji: "🚪" },
+            { word: "door", phonetic: "/dɔː/", definition: "n. 门", example: "Close the door behind you when you leave.", emoji: "🚪" },
+            { word: "oh", phonetic: "/əʊ/", definition: "excl. 哦；啊；嘿", example: "Oh, I didn't see you there!", emoji: "😮" },
+            { word: "step", phonetic: "/step/", definition: "n. 迈步；步骤；阶段", example: "The first step to learning a language is mastering the basics.", emoji: "👣" },
+            { word: "litter", phonetic: "/ˈlɪtə/", definition: "v. 乱扔 n. 垃圾", example: "Please don't litter; use the trash can.", emoji: "🗑️" }
+        ];
+
+        // DOM元素
+        const flashcard = document.getElementById('flashcard');
+        const wordElement = document.getElementById('word');
+        const phoneticElement = document.getElementById('phonetic');
+        const definitionElement = document.getElementById('definition');
+        const exampleElement = document.getElementById('example');
+        const emojiElement = document.getElementById('emoji');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const randomBtn = document.getElementById('randomBtn');
+        const soundBtn = document.getElementById('soundBtn');
+        const frontSoundBtn = document.getElementById('frontSoundBtn');
+        const currentIndexElement = document.getElementById('currentIndex');
+        const flipCountElement = document.getElementById('flipCount');
+        const progressBar = document.getElementById('progressBar');
+        const totalCountElement = document.getElementById('totalCount');
+        
+        // 初始化变量
+        let currentIndex = 0;
+        let flipCount = 0;
+        
+        // 显示单词总数
+        totalCountElement.textContent = words.length;
+        
+        // 更新卡片内容
+        function updateCard() {
+            const currentWord = words[currentIndex];
+            wordElement.textContent = currentWord.word;
+            phoneticElement.textContent = currentWord.phonetic;
+            definitionElement.textContent = currentWord.definition;
+            exampleElement.textContent = currentWord.example;
+            emojiElement.textContent = currentWord.emoji;
+            
+            // 更新当前索引显示
+            currentIndexElement.textContent = currentIndex + 1;
+            
+            // 更新进度条
+            const progressPercentage = ((currentIndex + 1) / words.length) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            
+            // 确保卡片显示正面
+            flashcard.classList.remove('flipped');
+        }
+        
+        // 初始化显示
+        updateCard();
+        
+        // 翻转卡片
+        flashcard.addEventListener('click', function() {
+            this.classList.toggle('flipped');
+            flipCount++;
+            flipCountElement.textContent = flipCount;
+        });
+        
+        // 上一个单词
+        prevBtn.addEventListener('click', function() {
+            currentIndex = (currentIndex - 1 + words.length) % words.length;
+            updateCard();
+        });
+        
+        // 下一个单词
+        nextBtn.addEventListener('click', function() {
+            currentIndex = (currentIndex + 1) % words.length;
+            updateCard();
+        });
+        
+        // 随机单词
+        randomBtn.addEventListener('click', function() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * words.length);
+            } while (newIndex === currentIndex && words.length > 1);
+            
+            currentIndex = newIndex;
+            updateCard();
+        });
+        
+        // 发音功能（背面按钮）
+        soundBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 防止触发卡片翻转
+            speakCurrentWord();
+        });
+        
+        // 发音功能（正面按钮）
+        frontSoundBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 防止触发卡片翻转
+            speakCurrentWord();
+        });
+        
+        // 语音合成函数
+        function speakCurrentWord() {
+            const currentWord = words[currentIndex].word;
+            
+            if ('speechSynthesis' in window) {
+                // 停止当前正在播放的语音
+                speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(currentWord);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                utterance.pitch = 1.1;
+                utterance.volume = 1.0;
+                
+                // 添加动画效果
+                soundBtn.innerHTML = '<i class="fas fa-volume-up"></i> 发音中...';
+                frontSoundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                frontSoundBtn.style.transform = 'scale(1.2)';
+                
+                utterance.onend = function() {
+                    soundBtn.innerHTML = '<i class="fas fa-volume-up"></i> 发音';
+                    frontSoundBtn.innerHTML = '<i class="fas fa-volume-up"></i>';
+                    frontSoundBtn.style.transform = 'scale(1)';
+                };
+                
+                speechSynthesis.speak(utterance);
+            } else {
+                alert('您的浏览器不支持语音合成功能，请使用Chrome、Edge或Safari浏览器');
+            }
+        }
+    </script>
+</body>
+</html>
